@@ -1,0 +1,59 @@
+main {
+  background-image: url("../../../public/image/rct-session-banner.e8a1006e.jpg");
+  background-repeat: no-repeat;
+  background-size: cover;
+  left: 0;
+  position: fixed;
+  right: 0;
+  height: 100%;
+  overflow-y: auto;
+  overflow-x: hidden;
+}
+.container {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
+}
+.container form {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  width: 100%;
+  max-width: 400px;
+  padding: 20px;
+  background-color: rgba(255, 255, 255, 0.938);
+  border-radius: 10px;
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+}
+.container form input {
+  width: 100%;
+  padding: 10px;
+  margin: 10px 0;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+.container form input[type="submit"] {
+  background-color: rgb(63, 77, 103);
+  color: rgb(169, 183, 208);
+  border: none;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 16px;
+  font-weight: bold;
+}
+
+.container form input[type="submit"]:hover {
+    background-color: rgb(78, 90, 112);
+}
+.alert{
+    /* display: none; */
+    width: 100%;
+    /* padding: 10px; */
+    margin: 10px 0;
+    color: red;
+    border-radius: 5px;
+    text-align: center;
+}
