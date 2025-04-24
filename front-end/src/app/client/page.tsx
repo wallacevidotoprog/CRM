@@ -1,83 +1,173 @@
-"use client";
+'use client';
 
 import { createClient, deleteClient, GetAll, updateClient } from "@/api/service/client.service";
 import AlertModal from "@/components/AlertModal";
 import ClienteForm from "@/components/client/ClienteForm";
 import ClienteList from "@/components/client/ClienteList";
-import "@/styles/client.css";
+//import "@/styles/client.css";
 import type { Client } from "@/types/client";
 import { ApiResponse } from "@/types/response.api";
 import { useEffect, useState } from "react";
 
 export default function Client() {
-  const [clients, setClients] = useState<Client[]>([]);
   const [clientSelected, setClientSelected] = useState<Client | undefined>();
   const [showAlert, setShowAlert] = useState(false);
   const [alertMessage, setAlertMessage] = useState("");
+  const [showForm, setShowForm] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [clients, setClients] = useState<Client[]>([]);
+  const [pagination, setPagination] = useState({
+    currentPage: 1,
+    pageSize: 10,
+    totalItems: 0,
+    totalPages: 1,
+    searchTerm: ''
+  });
 
   useEffect(() => {
     fetchClients();
-  }, []);
+  }, [pagination.currentPage, pagination.pageSize, pagination.searchTerm]);
 
   const fetchClients = async () => {
-    const res = await GetAll();
-    setClients(res);
+    setLoading(true);
+    try {
+      const result = await GetAll({
+        page: pagination.currentPage,
+        pageSize: pagination.pageSize,
+        name: pagination.searchTerm
+      });
+
+      if (result.success) {
+        setClients(result.data);
+        setPagination(prev => ({
+          ...prev,
+          totalItems: result.pagination.totalItems,
+          totalPages: result.pagination.totalPages
+        }));
+      }
+    } catch (error) {
+      setAlertMessage(error instanceof Error ? error.message : "Erro ao buscar clientes");
+      setShowAlert(true);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const handlePageChange = (newPage: number) => {
+    setPagination(prev => ({ ...prev, currentPage: newPage }));
+  };
+
+  const handlePageSizeChange = (newSize: number) => {
+    setPagination(prev => ({ ...prev, pageSize: newSize, currentPage: 1 }));
+  };
+
+  const handleSearch = (term: string) => {
+    setPagination(prev => ({ ...prev, searchTerm: term, currentPage: 1 }));
   };
 
   const salvarCliente = async (client: Client) => {
     let result: ApiResponse;
-    if (client.id) {
-      result = await updateClient(client);
-    } else {
-      result = await createClient(client);
+    try {
+      if (client.id) {
+        result = await updateClient(client);
+      } else {
+        result = await createClient(client);
+      }
+      
+      if (result.ok) {
+        await fetchClients();
+        setClientSelected(undefined);
+        setShowForm(false);
+      } else {
+        throw new Error(result.message || "Erro ao salvar cliente");
+      }
+    } catch (error) {
+      setAlertMessage(error instanceof Error ? error.message : "Erro desconhecido");
+      setShowAlert(true);
     }
-    if (result.ok) {
-      await fetchClients();
-      setClientSelected(undefined);
-      return;
-    }
-
-    setAlertMessage(result.message||"Erro ao salvar cliente");
-    setShowAlert(true);
   };
 
-  const editarCliente = (client: Client) => {   
+  const editarCliente = (client: Client) => {
     setClientSelected(client);
+    setShowForm(true);
   };
 
   const excluirCliente = async (id: string) => {
-
     if (!confirm("Deseja realmente excluir o cliente?")) return;
 
-
-    const result: ApiResponse = await deleteClient(id);
-    if (result.ok) {
-      await fetchClients();
-      return;
+    try {
+      const result: ApiResponse = await deleteClient(id);
+      if (result.ok) {
+        // Ajusta a paginação se necessário
+        const itemsLeft = pagination.totalItems - 1;
+        const itemsPerPage = pagination.pageSize;
+        const newTotalPages = Math.ceil(itemsLeft / itemsPerPage);
+        
+        setPagination(prev => ({
+          ...prev,
+          totalItems: itemsLeft,
+          totalPages: newTotalPages,
+          currentPage: prev.currentPage > newTotalPages ? newTotalPages : prev.currentPage
+        }));
+        
+        await fetchClients();
+      } else {
+        throw new Error(result.message || "Erro ao excluir cliente");
+      }
+    } catch (error) {
+      setAlertMessage(error instanceof Error ? error.message : "Erro desconhecido");
+      setShowAlert(true);
     }
-    setAlertMessage(result.message||"Erro ao excluir cliente");
-    setShowAlert(true);
-
   };
 
-    function clearForm(): void {
-        //throw new Error("Function not implemented.");
-    }
-
-  return (<>
-    <div className="clientes-container">
-      <h1>Gerenciamento de Clientes</h1>
-      <div className="clientes-content">
-        <ClienteForm client={clientSelected} onSave={salvarCliente} onClear={clearForm} />
-        <ClienteList clients={clients} onEdit={editarCliente} onDelete={excluirCliente} />
-      </div>
-    </div>
-    {showAlert && (
-        <AlertModal
-          message={alertMessage}
-          onClose={() => setShowAlert(false)}
+  return (
+    <>
+      {showForm && (
+        <ClienteForm 
+          client={clientSelected} 
+          onSave={salvarCliente} 
+          onClose={() => {
+            setClientSelected(undefined);
+            setShowForm(false);
+          }} 
+          onClear={() => setClientSelected(undefined)}
         />
       )}
-  </>
+      
+      <div className="clientes-container">
+        <h1>Gerenciamento de Clientes</h1>
+        <button 
+          type="button" 
+          onClick={() => setShowForm(true)}
+          disabled={loading}
+          className="btn btn-primary"
+        >
+          Cadastrar Novo Cliente
+        </button>
+        
+        <div className="clientes-content">
+          <ClienteList 
+            clients={clients}
+            onEdit={editarCliente} 
+            onDelete={excluirCliente}
+            currentPage={pagination.currentPage}
+            pageSize={pagination.pageSize}
+            totalItems={pagination.totalItems}
+            totalPages={pagination.totalPages}
+            onPageChange={handlePageChange}
+            onPageSizeChange={handlePageSizeChange}
+            onSearch={handleSearch}
+            loading={loading}
+          />
+        </div>
+      </div>
+      
+      {showAlert && (
+        <AlertModal 
+          message={alertMessage} 
+          onClose={() => setShowAlert(false)} 
+        />
+      )}
+    </>
   );
 }

@@ -29,8 +29,8 @@ const clientModel = connection.define(
   }
 );
 
-clientModel.sync({ alter: true }).then(() => {
-  console.log("🟢 Client model synchronized");
-});
+// clientModel.sync({ alter: true }).then(() => {
+//   console.log("🟢 Client model synchronized");
+// });
 
 export default clientModel;

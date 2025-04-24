@@ -17,8 +17,9 @@ class ClientService {
       }
 
       if (await clientModel.findOne({ where: { email: value.email } })) {
-        return res.status(400).json(ResponseApi.response("Email already exists"));
-        
+        return res
+          .status(400)
+          .json(ResponseApi.response("Email already exists"));
       }
 
       await clientModel.create(value);
@@ -91,41 +92,47 @@ class ClientService {
   async getAllClient(req, res) {
     try {
       const queryParams = req.query;
-      const { name, email, phone, address } = queryParams;
+      const { name, email, phone, address, page = 1, pageSize = 10 } = queryParams;
+      
+      
+      const pageNumber = Math.max(parseInt(page), 1);
+      const limit = Math.min(parseInt(pageSize), 100); 
+      const offset = (pageNumber - 1) * limit;
 
       const where = {};
+      
+      // Filtros de busca
+      if (name) where.name = { [Op.like]: `%${name}%` };
+      if (email) where.email = { [Op.like]: `%${email}%` };
+      if (address) where.address = { [Op.like]: `%${address}%` };
+      if (phone) where.phone = { [Op.like]: `%${phone.replace(/\D/g, '')}%` }; 
 
-      if (name) {
-        where.name = {
-          [Op.like]: `%${name}%`,
-        };
-      }
-      if (email) {
-        where.email = {
-          [Op.like]: `%${email}%`,
-        };
-      }
-      if (address) {
-        where.address = {
-          [Op.like]: `%${address}%`,
-        };
-      }
-      if (phone) {
-        where.phone = {
-          [Op.like]: `%${phone}%`,
-        };
-      }
-
-      const result = await clientModel.findAll({
-        where: where,
-        raw: true,
+    
+      const { count, rows } = await clientModel.findAndCountAll({
+        where,
+        limit,
+        offset,
+        order: [['createdAt', 'DESC']],
+        raw: true
       });
 
-      return res.status(200).json(ResponseApi.response(null, result));
+      const totalPages = Math.ceil(count / limit);
+      
+      return res.status(200).json(
+        ResponseApi.response(null, rows, {
+          totalItems: count,
+            totalPages: totalPages,
+            currentPage: pageNumber,
+            pageSize: limit,
+            hasNextPage: pageNumber < totalPages,
+            hasPreviousPage: pageNumber > 1
+        })
+      );
     } catch (error) {
-      res.status(500).json(ResponseApi.response(error.message));
+      console.error('Error in getAllClient:', error);
+      return res.status(500).json(ResponseApi.response(error.message, null));
     }
-  }
+}
 }
 
 export default new ClientService();

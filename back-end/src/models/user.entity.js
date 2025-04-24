@@ -37,9 +37,9 @@ const userModel = connection.define(
   }
 );
 
-userModel.sync({ alter: true }).then(() => {
-  console.log("🟢 User model synchronized");
-});
+// userModel.sync({ alter: true }).then(() => {
+//   console.log("🟢 User model synchronized");
+// });
 
 export default userModel;
 export { UserRoles };
