@@ -1,13 +1,10 @@
 .clientes-container { 
-    margin: 2rem auto;
-    padding: 1rem;
-    font-family: 'Segoe UI', sans-serif;
+    width: 100%;
+    padding: 20px;
   }
   
   .clientes-content {
-    display: flex;
-    gap: 2rem;
-    flex-wrap: wrap;
+  
   }
   .container-form-client{
     position: absolute;

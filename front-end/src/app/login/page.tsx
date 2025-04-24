@@ -17,7 +17,8 @@ export default function Login() {
     const checkAndRedirect = async () => {
       const response = await me();
       if (response) {
-        router.push("/home");
+        // router.push("/home");
+        window.location.href = "/home";
       } else {
         setChecking(false);
       }
@@ -37,7 +38,7 @@ export default function Login() {
 
     const res: ApiResponse = await login({ email, password });
     if (res.ok) {
-      router.push("/home");
+      window.location.href = "/home";
     }
 
     setError(res?.message || "");
@@ -45,23 +46,16 @@ export default function Login() {
 
   return (
     <>
-      <main className="container">
-        <form onSubmit={handleSubmit}>
-          <Image src={imgL} alt="Logo" width={100} height={100} priority />
-          {error && <center className="alert">{error}</center>}
-          <input type="email" name="email" placeholder="Email" required />
-          <input
-            type="password"
-            name="password"
-            placeholder="Password"
-            required
-          />
-          <input type="submit" value="Acessar" />
-          <p>
-            Don't have an account? <a href="/register">Register</a>
-          </p>
-        </form>
-      </main>
+      <form onSubmit={handleSubmit} className="container-login">
+        <Image src={imgL} alt="Logo" width={100} height={100} priority />
+        {error && <center className="alert">{error}</center>}
+        <input type="email" name="email" placeholder="Email" required />
+        <input type="password" name="password" placeholder="Password" required />
+        <input type="submit" value="Acessar" />
+        <p>
+          Don't have an account? <a href="/register">Register</a>
+        </p>
+      </form>
     </>
   );
 }

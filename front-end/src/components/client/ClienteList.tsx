@@ -49,7 +49,6 @@ export default function ClienteList({
         </div>
 
         <div className="card-body">
-          {/* Search and Page Size Controls */}
           <div className="row mb-4">
             <div className="col-md-8">
               <form onSubmit={handleSearchSubmit} className="input-group">
@@ -83,7 +82,6 @@ export default function ClienteList({
             </div>
           </div>
 
-          {/* Loading Indicator */}
           {loading && (
             <div className="text-center my-4">
               <div className="spinner-border text-primary" role="status">
@@ -93,12 +91,12 @@ export default function ClienteList({
             </div>
           )}
 
-          {/* Empty State */}
+
           {!loading && clients.length === 0 && (
             <div className="alert alert-info text-center">{localSearchTerm ? "Nenhum cliente encontrado" : "Nenhum cliente cadastrado"}</div>
           )}
 
-          {/* Clients Table */}
+
           {!loading && clients.length > 0 && (
             <>
               <div className="table-responsive">
@@ -119,11 +117,11 @@ export default function ClienteList({
                         <td>{cliente.email}</td>
                         <td>{cliente.phone}</td>
                         <td>{cliente.address}</td>
-                        <td className="text-end">
-                          <button className="btn btn-sm btn-outline-primary me-2" onClick={() => onEdit(cliente)} disabled={loading}>
+                        <td className="flex-column flex-md-row justify-content-end align-items-center">
+                          <button className="btn btn-sm btn-outline-primary py-2 px-3 me-md-2 mb-2 mb-md-0" style={{minWidth:"80px"}} onClick={() => onEdit(cliente)} disabled={loading}>
                             <i className="bi bi-pencil"></i> Editar
                           </button>
-                          <button className="btn btn-sm btn-outline-danger" onClick={() => onDelete(cliente.id ?? "")} disabled={loading}>
+                          <button className="btn btn-sm btn-outline-danger py-2 px-3 me-md-2 mb-2 mb-md-0" style={{minWidth:"80px"}} onClick={() => onDelete(cliente.id ?? "")} disabled={loading}>
                             <i className="bi bi-trash"></i> Excluir
                           </button>
                         </td>
@@ -133,7 +131,7 @@ export default function ClienteList({
                 </table>
               </div>
 
-              {/* Pagination Controls */}
+
               <div className="d-flex justify-content-between align-items-center mt-4">
                 <div>
                   Mostrando {(currentPage - 1) * pageSize + 1} a {Math.min(currentPage * pageSize, totalItems)} de {totalItems} clientes

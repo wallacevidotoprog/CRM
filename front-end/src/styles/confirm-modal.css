@@ -1,0 +1,79 @@
+/* Estilo base do dialog */
+dialog {
+    border: none;
+    border-radius: 8px;
+    width: 90%;
+    max-width: 400px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    padding: 0;
+    overflow: hidden;
+    animation: fadeIn 0.2s ease-out;
+    font-family: sans-serif;
+  }
+  
+  
+  dialog::backdrop {
+    background: rgba(0, 0, 0, 0.5);
+  }
+  
+  
+  .modal-header {
+    padding: 1rem;
+    border-bottom: 1px solid #ddd;
+    font-weight: bold;
+    font-size: 1.1rem;
+  }
+  
+  
+  .modal-body {
+    padding: 1rem;
+    font-size: 1rem;
+  }
+  
+  
+  .modal-footer {
+    padding: 1rem;
+    border-top: 1px solid #ddd;
+    display: flex;
+    justify-content: flex-end;
+    gap: 0.5rem;
+  }
+  
+  
+  .modal-btn {
+    padding: 0.5rem 1rem;
+    border-radius: 5px;
+    border: none;
+    cursor: pointer;
+    font-weight: bold;
+  }
+  
+  .modal-btn.cancel {
+    background-color: #e53935;
+    color: white;
+  }
+  
+  .modal-btn.cancel:hover {
+    background-color: #e5383588;
+  }
+  
+  .modal-btn.confirm {
+    background-color: #1b7908;
+    color: white;
+  }
+  
+  .modal-btn.confirm:hover {
+    background-color: #1b7908a6;
+  }
+  
+  @keyframes fadeIn {
+    from {
+      opacity: 0;
+      transform: translateY(-10px);
+    }
+    to {
+      opacity: 1;
+      transform: translateY(0);
+    }
+  }
+  

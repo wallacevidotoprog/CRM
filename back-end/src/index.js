@@ -5,7 +5,7 @@ import cors from "cors";
 const app = express();
 
 const corsOptions = {
-  origin: ["http://localhost:4000"],
+  origin: ["http://localhost:4000","http://192.168.56.1:4000","http://192.168.56.1"],
   methods: ["GET", "POST", "PATCH","DELETE", "OPTIONS"],
   allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
@@ -16,6 +16,6 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use("/api", routers);
 
-app.listen(3000, () => {
+app.listen(3000,'192.168.56.1', () => {
   console.log("✅ Server is running on port 3000");
 });

@@ -1,4 +1,4 @@
-main {
+.container-main{
   background-image: url("../../../public/image/rct-session-banner.e8a1006e.jpg");
   background-repeat: no-repeat;
   background-size: cover;
@@ -8,15 +8,18 @@ main {
   height: 100%;
   overflow-y: auto;
   overflow-x: hidden;
+  margin-top: 0;
 }
-.container {
+
+
+/* .container-login {
   display: flex;
   flex-direction: column;
   justify-content: center;
   align-items: center;
   height: 100vh;
-}
-.container form {
+} */
+.container-login {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -28,14 +31,14 @@ main {
   border-radius: 10px;
   box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
 }
-.container form input {
+.container-login  input {
   width: 100%;
   padding: 10px;
   margin: 10px 0;
   border: 1px solid #ccc;
   border-radius: 5px;
 }
-.container form input[type="submit"] {
+.container-login input[type="submit"] {
   background-color: rgb(63, 77, 103);
   color: rgb(169, 183, 208);
   border: none;

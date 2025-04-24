@@ -7,7 +7,7 @@ import { useEffect, useState } from "react";
 export default function Home() {
   const router = useRouter();
   const [isChecking, setChecking] = useState(true);
- 
+  
   useEffect(() => {
       const checkAndRedirect = async () => {
         const response = await me();        
@@ -25,7 +25,6 @@ export default function Home() {
   return (
    <>
    <main className="container">
-      {/* renderização da página de login aqui */}
     </main>
    </>
   );
