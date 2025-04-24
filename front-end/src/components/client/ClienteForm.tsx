@@ -1,3 +1,4 @@
+'use client';
 import { Client } from "@/types/client";
 import { useEffect, useState } from "react";
 
@@ -39,7 +40,7 @@ export default function ClienteForm({ client, onSave, onClear: onClear, onClose 
       <div
         className={`modal fade ${show ? "show d-block" : ""}`}
         style={{ backgroundColor: show ? "rgba(0,0,0,0.5)" : "transparent" }}
-        tabIndex="-1"
+        tabIndex={-1}
         aria-labelledby="clienteModalLabel"
         aria-hidden={!show}
       >

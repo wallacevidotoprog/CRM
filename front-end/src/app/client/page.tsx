@@ -1,9 +1,9 @@
 'use client';
-
 import { createClient, deleteClient, GetAll, updateClient } from "@/api/service/client.service";
 import AlertModal from "@/components/AlertModal";
 import ClienteForm from "@/components/client/ClienteForm";
 import ClienteList from "@/components/client/ClienteList";
+import { showToastConfirmation } from "@/components/Toasts/toastHelper";
 //import "@/styles/client.css";
 import type { Client } from "@/types/client";
 import { ApiResponse } from "@/types/response.api";
@@ -93,12 +93,14 @@ export default function Client() {
   };
 
   const excluirCliente = async (id: string) => {
-    if (!confirm("Deseja realmente excluir o cliente?")) return;
+    
 
+    const result = await showToastConfirmation();
+    if (!result) return;
     try {
       const result: ApiResponse = await deleteClient(id);
       if (result.ok) {
-        // Ajusta a paginação se necessário
+        
         const itemsLeft = pagination.totalItems - 1;
         const itemsPerPage = pagination.pageSize;
         const newTotalPages = Math.ceil(itemsLeft / itemsPerPage);
@@ -121,7 +123,7 @@ export default function Client() {
   };
 
   return (
-    <>
+    <>    
       {showForm && (
         <ClienteForm 
           client={clientSelected} 
@@ -168,6 +170,12 @@ export default function Client() {
           onClose={() => setShowAlert(false)} 
         />
       )}
+
+
+      
+
+
+
     </>
   );
 }
