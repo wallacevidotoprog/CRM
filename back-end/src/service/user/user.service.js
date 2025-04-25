@@ -3,22 +3,37 @@ import dotenv from "dotenv";
 import jwt from "jsonwebtoken";
 import { Op } from "sequelize";
 import userModel from "../../models/user.entity.js";
-import { UserRoles } from "./../../models/user.entity.js";
 import ResponseApi from "../../utils/response.js";
+import { UserRoles } from "./../../models/user.entity.js";
 dotenv.config();
 
 class UserService {
-  async createUser(userData) {
+  async createUser(req, res) {
     try {
-      userData.password = bcrypt.hashSync(userData.password, 10);
-      const newUser = await userModel.create(userData);
-      return;
+      const { error, value } = userDtoCreate.validate(req.body, {
+        abortEarly: false,
+      });
+      if (error) {
+        const mensagens = error.details.map((d) => d.message);
+        return res.status(400).json(ResponseApi.response(mensagens));
+      }
+
+      const user = await userModel.count({ where: { email: userData.email } });
+      if (user > 0) {
+        res.status(400).json(ResponseApi.response("Email já cadastrado"));
+        return;
+      }
+
+      value.password = bcrypt.hashSync(value.password, 10);
+      await userModel.create(value);
+      return res.status(201).json(ResponseApi.response(null, null));
     } catch (error) {
-      throw new Error("Error creating user: " + error.message);
+      res.status(500).json(ResponseApi.response(error.message));
     }
   }
-  async getUserById(userId, req, res) {
+  async getUserById(req, res) {
     try {
+      const userId = req.params.id;
       if (!userId || !Number(userId)) {
         return res.status(400).json({ message: "Invalid user ID" });
       }
@@ -39,13 +54,22 @@ class UserService {
       }
 
       //const {password, ...userWithoutPassword} = user.dataValues;
-      return user;
+      return res.status(200).json(ResponseApi(user).response());
     } catch (error) {
-      throw new Error("Error fetching user: " + error.message);
+      res.status(500).json(ResponseApi.response(error.message));
     }
   }
-  async updateUser(userId, userData, req, res) {
+  async updateUser(req, res) {
     try {
+      const userId = req.params.id;
+      const { error, value } = userDtoUpdate.validate(req.body, {
+        abortEarly: false,
+      });
+      if (error) {
+        const mensagens = error.details.map((d) => d.message);
+        return res.status(400).json(ResponseApi.response(mensagens));
+      }
+
       const isAdmin = req.auth.role === UserRoles.ADMIN;
       const isOwnProfile = req.auth.id === Number(userId);
 
@@ -56,27 +80,29 @@ class UserService {
       if (!user) {
         throw new Error("User not found");
       }
-      await user.update(userData);
-      return ;
+      await user.update(value);
+      return res.status(200).json(ResponseApi.response(null, req.body));
     } catch (error) {
-      throw new Error("Error updating user: " + error.message);
+      res.status(500).json(ResponseApi.response(error.message));
     }
   }
-  async deleteUser(userId) {
+  async deleteUser(req, res) {
     try {
+      const userId = req.params.id;
       const user = await userModel.findByPk(userId);
       if (!user) {
         throw new Error("User not found");
       }
       await user.destroy();
-      return { message: "User deleted successfully" };
+      return res.status(200).json(ResponseApi.response(null, user));
     } catch (error) {
-      throw new Error("Error deleting user: " + error.message);
+      res.status(500).json(ResponseApi.response(error.message));
     }
   }
-  async getAllUsers(queryParams) {
+  async getAllUsers(req, res) {
     try {
-      const { name, email, role } = queryParams;
+     
+      const { name, email, role } = req.query;
 
       const where = {};
 
@@ -94,12 +120,16 @@ class UserService {
         where.role = role;
       }
 
-      const users = await userModel.findAll({ where: where, raw: true,attributes: { exclude: ["password"] } });
+      const users = await userModel.findAll({
+        where: where,
+        raw: true,
+        attributes: { exclude: ["password"] },
+      });
       //const usersWithoutPasswords = users.map(({ password, ...user }) => user);
 
-      return users;
+      return res.status(200).json(ResponseApi.response(null, users));;
     } catch (error) {
-      throw new Error("Error fetching users: " + error.message);
+      res.status(500).json(ResponseApi.response(error.message));
     }
   }
 
@@ -113,19 +143,12 @@ class UserService {
       if (!user) {
         throw new Error("Invalid email or password");
       }
-      const isPasswordValid = bcrypt.compareSync(
-        userDtoAuth.password,
-        user.password
-      );
+      const isPasswordValid = bcrypt.compareSync(userDtoAuth.password, user.password);
 
       if (!isPasswordValid) {
         throw new Error("Invalid email or password");
       }
-      const token = jwt.sign(
-        { id: user.id, name: user.name, email: user.email, role: user.role },
-        process.env.JWT_SECRET,
-        { expiresIn: "1h" }
-      );
+      const token = jwt.sign({ id: user.id, name: user.name, email: user.email, role: user.role }, process.env.JWT_SECRET, { expiresIn: "1h" });
       res.cookie("token", token, {
         httpOnly: true,
         maxAge: 3600000,

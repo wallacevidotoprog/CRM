@@ -21,10 +21,6 @@ const userDtoCreate = Joi.object({
     "string.max": "A senha deve ter no máximo {#limit} caracteres",
     "any.required": "A senha é obrigatória",
   }),
-  role: Joi.string().valid("admin", "user").default("user").messages({
-    "any.only": "O papel deve ser 'admin' ou 'user'",
-    "string.base": "O papel deve ser um texto",
-  }),
 });
 
 const userDtoUpdate = Joi.object({
@@ -50,7 +46,7 @@ const userDtoUpdate = Joi.object({
     "string.base": "O papel deve ser um texto",
   }),
 });
- 
+
 const userDtoAuth = Joi.object({
   email: Joi.string().email().required().messages({
     "string.base": "O email deve ser um texto",

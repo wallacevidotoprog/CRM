@@ -29,7 +29,7 @@ routerAuth.post("/auth/logout", async (req, res) => {
   return res.status(200).json(ResponseApi.response("Logout realizado com sucesso!"));
 });
 routerAuth.get("/auth/me", authMiddleware, (req, res) => {
-  res.json(ResponseApi.response("Acesso autorizado!",req.user));
+  res.json(ResponseApi.response("Acesso autorizado!", req.user));
 });
 
 export default routerAuth;

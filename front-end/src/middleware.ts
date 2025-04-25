@@ -4,6 +4,9 @@ export async function middleware(req: NextRequest) {
   const protectedPaths = ["/home", "/client", "/product", "/user", "/sale"];
 
   const { pathname } = req.nextUrl;
+  console.log(`🟢🟢Middleware triggered for path: ${pathname}`);
+
+
 
   if (pathname === "/") {
     const homeUrl = new URL("/home", req.url);
@@ -17,7 +20,8 @@ export async function middleware(req: NextRequest) {
   const token = req.cookies.get("token")?.value;
 
   if (!token) {
-    return NextResponse.redirect(new URL("/login", req.url));
+    
+    return NextResponse.redirect(new URL("/auth", req.url));
   }
 
   return NextResponse.next();

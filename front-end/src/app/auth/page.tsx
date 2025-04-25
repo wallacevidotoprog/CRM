@@ -53,7 +53,7 @@ export default function Login() {
         <input type="password" name="password" placeholder="Password" required />
         <input type="submit" value="Acessar" />
         <p>
-          Don't have an account? <a href="/register">Register</a>
+          Don't have an account? <a href="/auth/register">Register</a>
         </p>
       </form>
     </>

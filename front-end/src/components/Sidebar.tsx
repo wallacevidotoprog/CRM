@@ -2,16 +2,17 @@
 import { useEffect, useState } from "react";
 import { FaBars, FaCog, FaHome, FaUser } from "react-icons/fa";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { useRouter,usePathname  } from "next/navigation";
 import { me } from "@/api/service/authService.service";
 import logo from "./../../public/image/crm.png";
 import Image from "next/image";
 
 export default function Navbar() {
   const [expanded, setExpanded] = useState(false);
-
   const [isAuthenticated, setIsAuthenticated] = useState(false);
+
   const router = useRouter();
+  const pathname = usePathname();
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -20,11 +21,15 @@ export default function Navbar() {
         if (response) {
           setIsAuthenticated(true);
         } else {
-          router.push('/login');
+          if (pathname === '/auth/register') {
+            setIsAuthenticated(false);
+            return;
+          }
+          router.push('/auth');
         }
       } catch (error) {
         console.error('Erro ao verificar autenticação:', error);
-        router.push('/login');
+        router.push('/auth');
       }
     };
 

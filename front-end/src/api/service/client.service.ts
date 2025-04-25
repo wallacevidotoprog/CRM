@@ -2,16 +2,6 @@ import { Client } from "@/types/client";
 import { ApiResponse } from "@/types/response.api";
 import { clienteDtoCreate, clienteDtoUpdate } from "../model/client.model";
 
-// export async function GetAll(): Promise<Client[]> {
-//   const res = await fetch(process.env.NEXT_PUBLIC_API + "client", {
-//     cache: "no-store",
-//     credentials: "include",
-//   });
-//   if (!res.ok) throw new Error("Erro ao buscar clientes");
-
-//   const data: ApiResponse = await res.json();
-//   return data.data as Client[];
-// }
 type PaginationData = {
   totalItems: number;
   totalPages: number;

@@ -15,7 +15,7 @@ export default function Home() {
           router.push("/home");
         }
         else {
-          router.push("/login");
+          router.push("/auth");
         }
       };
       checkAndRedirect();
