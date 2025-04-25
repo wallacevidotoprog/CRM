@@ -23,8 +23,6 @@ const interactionModel = connection.define(
   }
 );
 
-// interactionModel.sync({ alter: true }).then(() => {
-//   console.log("🟢 Interaction model synchronized");
-// });
+
 
 export default interactionModel;

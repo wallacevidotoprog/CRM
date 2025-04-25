@@ -1,8 +1,10 @@
 import { Sequelize } from "sequelize";
+import dotenv from "dotenv";
+dotenv.config();
 
-const connection = new Sequelize("ceopag", "root", "", {
-  host: "localhost",
-  port: 3306,
+const connection = new Sequelize(process.env.B_NAME, process.env.DB_USER, process.env.DB_PASS, {
+  host: process.env.DB_HOST,
+  port: process.env.DB_PORT,
   dialect: "mysql",
   logging: false,
 });
@@ -16,7 +18,5 @@ connection
     console.error("❌ Unable to connect to the database:", err);
   });
 
-connection.sync({ force: false }).then(() => {
-  console.log("🟢 Database synchronized");
-});
+
 export default connection;

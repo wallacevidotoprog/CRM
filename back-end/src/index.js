@@ -1,6 +1,9 @@
 import express from "express";
 import routers from "./routers/index.js";
 import cors from "cors";
+import dotenv from 'dotenv'
+
+dotenv.config();
 
 const app = express();
 
@@ -16,6 +19,6 @@ app.use(cors(corsOptions));
 app.use(express.json());
 app.use("/api", routers);
 
-app.listen(3000,'192.168.56.1', () => {
-  console.log("✅ Server is running on port 3000");
+app.listen(process.env.PORT_SERVER, () => {
+  console.log("✅ Server is running on port:"+process.env.PORT_SERVER);
 });
